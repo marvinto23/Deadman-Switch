@@ -1,0 +1,41 @@
+<button id="myButton">Click me</button>
+
+<script>
+    var timer = null;
+    var timeout = null;
+
+    function startTimer() {
+        // Read the timeout value from the config file
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "config.json", true);
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                var config = JSON.parse(xhr.responseText);
+                timeout = config.timeout;
+
+                timer = setTimeout(function() {
+                    sendRequest();
+                }, timeout);
+            }
+        };
+        xhr.send();
+    }
+
+    function stopTimer() {
+        clearTimeout(timer);
+    }
+
+    function sendRequest() {
+        // Send an HTTP request to the back-end server
+        // to trigger the script to run
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "/run_script", true);
+        xhr.send();
+    }
+
+    document.getElementById("myButton").addEventListener("click", function() {
+        stopTimer();
+    });
+
+    startTimer();
+</script>
